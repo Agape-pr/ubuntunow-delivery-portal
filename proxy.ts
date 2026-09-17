@@ -29,22 +29,19 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  if (pathname.startsWith("/dashboard")) {
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (!isPortalRole(role!)) {
-      return NextResponse.redirect(new URL("/admin", request.url));
-    }
-    return NextResponse.next();
-  }
+  const surfaceGuards: { prefix: string; isAllowed: (role: Role) => boolean; fallback: string }[] = [
+    { prefix: "/dashboard", isAllowed: isPortalRole, fallback: "/admin" },
+    { prefix: "/admin", isAllowed: isAdminRole, fallback: "/dashboard" },
+  ];
 
-  if (pathname.startsWith("/admin")) {
+  for (const guard of surfaceGuards) {
+    if (!pathname.startsWith(guard.prefix)) continue;
+
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    if (!isAdminRole(role!)) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    if (!guard.isAllowed(role!)) {
+      return NextResponse.redirect(new URL(guard.fallback, request.url));
     }
     return NextResponse.next();
   }

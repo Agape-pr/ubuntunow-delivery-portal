@@ -26,29 +26,22 @@ export async function POST(request: Request) {
 
   const { access, refresh, role } = envelope.data;
   const cookieStore = await cookies();
-  const secure = process.env.NODE_ENV === "production";
+  const cookieDefaults = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+  };
 
-  cookieStore.set(ACCESS_TOKEN_COOKIE, access, {
-    httpOnly: true,
-    secure,
-    sameSite: "lax",
-    path: "/",
-    maxAge: ACCESS_TOKEN_MAX_AGE,
-  });
-  cookieStore.set(REFRESH_TOKEN_COOKIE, refresh, {
-    httpOnly: true,
-    secure,
-    sameSite: "lax",
-    path: "/",
-    maxAge: REFRESH_TOKEN_MAX_AGE,
-  });
-  cookieStore.set(ROLE_COOKIE, role, {
-    httpOnly: true,
-    secure,
-    sameSite: "lax",
-    path: "/",
-    maxAge: REFRESH_TOKEN_MAX_AGE,
-  });
+  const sessionCookies: [string, string, number][] = [
+    [ACCESS_TOKEN_COOKIE, access, ACCESS_TOKEN_MAX_AGE],
+    [REFRESH_TOKEN_COOKIE, refresh, REFRESH_TOKEN_MAX_AGE],
+    [ROLE_COOKIE, role, REFRESH_TOKEN_MAX_AGE],
+  ];
+
+  for (const [name, value, maxAge] of sessionCookies) {
+    cookieStore.set(name, value, { ...cookieDefaults, maxAge });
+  }
 
   return NextResponse.json({ success: true, data: { role } });
 }
