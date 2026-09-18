@@ -1,0 +1,93 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .wheel-spoke {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: spin 0.9s linear infinite;
+    }
+    .rig {
+      animation: bob 1.8s ease-in-out infinite;
+    }
+    .shadow {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: squash 1.8s ease-in-out infinite;
+    }
+    .motion-line {
+      animation: trail 1.1s ease-in-out infinite;
+    }
+    .motion-line:nth-child(2) { animation-delay: 0.15s; }
+    .motion-line:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes squash {
+      0%, 100% { transform: scale(1); opacity: 0.12; }
+      50% { transform: scale(0.9, 0.85); opacity: 0.08; }
+    }
+    @keyframes trail {
+      0% { transform: translateX(24px); opacity: 0; }
+      35% { opacity: 0.25; }
+      100% { transform: translateX(-16px); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wheel-spoke, .rig, .shadow, .motion-line {
+        animation: none;
+      }
+    }
+  </style>
+
+  <rect width="800" height="800" fill="#F1F3FF"/>
+  <circle cx="650" cy="150" r="170" fill="#E9EDFF"/>
+  <circle cx="90" cy="660" r="90" fill="#E1E8FD" opacity="0.6"/>
+
+  <!-- road -->
+  <rect x="0" y="560" width="800" height="240" fill="#DBE1FF"/>
+  <rect x="0" y="560" width="800" height="6" fill="#FFFFFF" fill-opacity="0.7"/>
+  <rect x="20" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+  <rect x="150" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+  <rect x="280" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+  <rect x="410" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+  <rect x="540" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+  <rect x="670" y="602" width="70" height="10" rx="4" fill="#FFFFFF" fill-opacity="0.8"/>
+
+  <!-- ground shadow -->
+  <ellipse class="shadow" cx="400" cy="628" rx="240" ry="18" fill="#141B2B" fill-opacity="0.12"/>
+
+  <!-- motion lines -->
+  <line class="motion-line" x1="90" y1="420" x2="190" y2="420" stroke="#141B2B" stroke-width="10" stroke-linecap="round"/>
+  <line class="motion-line" x1="70" y1="452" x2="200" y2="452" stroke="#141B2B" stroke-width="10" stroke-linecap="round"/>
+  <line class="motion-line" x1="100" y1="484" x2="180" y2="484" stroke="#141B2B" stroke-width="10" stroke-linecap="round"/>
+
+  <g class="rig">
+    <!-- cargo rack strut -->
+    <line x1="515" y1="392" x2="515" y2="505" stroke="#141B2B" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- delivery box -->
+    <rect x="460" y="300" width="110" height="90" rx="14" fill="#D97706"/>
+    <rect x="460" y="300" width="110" height="26" rx="10" fill="#92400E"/>
+    <rect x="502" y="286" width="26" height="16" rx="8" fill="none" stroke="#92400E" stroke-width="6"/>
+
+    <!-- bike (wheels, gear, frame) -->
+    <g transform="translate(184,245) scale(18)" fill="none" stroke="#141B2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18.5" cy="17.5" r="3.5"/>
+      <circle cx="5.5" cy="17.5" r="3.5"/>
+      <g class="wheel-spoke" stroke-width="0.8">
+        <line x1="18.5" y1="14.9" x2="18.5" y2="20.1"/>
+        <line x1="15.9" y1="17.5" x2="21.1" y2="17.5"/>
+      </g>
+      <g class="wheel-spoke" stroke-width="0.8">
+        <line x1="5.5" y1="14.9" x2="5.5" y2="20.1"/>
+        <line x1="2.9" y1="17.5" x2="8.1" y2="17.5"/>
+      </g>
+      <circle cx="15" cy="5" r="1"/>
+      <path d="M12 17.5V14l-3-3 4-3 2 3h2"/>
+    </g>
+  </g>
+</svg>

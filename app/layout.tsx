@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
-// Matches the driver app's font (see deliverOs-fe/constants/theme.ts).
-// Inter is loaded as a variable font here, so weight is set with the
-// standard Tailwind font-weight utilities (font-medium, font-bold, ...)
-// rather than the per-weight family hack the RN app needs.
-const inter = Inter({
-  variable: "--font-inter",
+// Portal-only choice (per request, matching a reference design) -- this
+// intentionally diverges from the driver app, which still uses Inter.
+// Poppins has no variable-font build on Google Fonts, so weights are
+// listed explicitly and selected with the usual Tailwind font-weight
+// utilities (font-medium, font-bold, ...).
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );

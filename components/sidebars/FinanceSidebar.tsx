@@ -1,12 +1,19 @@
 "use client";
 
 import { SidebarNav } from "./sidebar-nav";
-import { FINANCE_NAV_ITEMS } from "./nav-items";
+import { FINANCE_NAV_GROUPS } from "./nav-items";
 
 export function FinanceSidebar(props: {
   active: string;
   onSelect: (key: string) => void;
   onLogout: () => void;
 }) {
-  return <SidebarNav heading="Finance" items={FINANCE_NAV_ITEMS} {...props} />;
+  return (
+    <SidebarNav
+      subheading="UbuntuNow / Biras"
+      roleLabel="Finance"
+      groups={FINANCE_NAV_GROUPS}
+      {...props}
+    />
+  );
 }

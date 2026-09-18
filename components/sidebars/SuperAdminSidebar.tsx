@@ -1,12 +1,19 @@
 "use client";
 
 import { SidebarNav } from "./sidebar-nav";
-import { SUPER_ADMIN_NAV_ITEMS } from "./nav-items";
+import { SUPER_ADMIN_NAV_GROUPS } from "./nav-items";
 
 export function SuperAdminSidebar(props: {
   active: string;
   onSelect: (key: string) => void;
   onLogout: () => void;
 }) {
-  return <SidebarNav heading="Super Admin" items={SUPER_ADMIN_NAV_ITEMS} {...props} />;
+  return (
+    <SidebarNav
+      subheading="UbuntuNow / Biras"
+      roleLabel="Super Admin"
+      groups={SUPER_ADMIN_NAV_GROUPS}
+      {...props}
+    />
+  );
 }
