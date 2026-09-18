@@ -1,26 +1,243 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+/*
+ ---break---
+ */
+@custom-variant dark (&:is(.dark *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * Design tokens mirrored from deliverOs-fe/constants/theme.ts (the driver
+ * app's single source of truth, itself taken from the "Delivery Os" Figma
+ * file). Keep these two in sync by hand — there's no shared package yet.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-inter);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: #d97706;
+  --color-primary-deep: #92400e;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #fef3c7;
+
+  --color-background: #f9f9ff;
+  --color-surface: #ffffff;
+  --color-input-bg: #ffffff;
+  --color-border: #c3c5d7;
+
+  --color-text-dark: #141b2b;
+  --color-secondary: #434654;
+  --color-text-muted: #737686;
+  --color-placeholder: #737686;
+
+  --color-success: #006c4a;
+  --color-success-soft: rgba(0, 108, 74, 0.1);
+  --color-success-track: #82f5c1;
+
+  --color-icon-chip: #e9edff;
+  --color-chip-surface: #f1f3ff;
+  --color-avatar-ring: #dbe1ff;
+  --color-avatar-ring-outer: #e1e8fd;
+  --color-map-base: #dce2f7;
+
+  --color-info: #2563eb;
+  --color-overlay-dark: #293040;
+  --color-on-overlay-dark: #edf0ff;
+  --color-rating-pill: #ffdbce;
+  --color-vehicle: #003fb1;
+  --color-payout-surface: rgba(130, 245, 193, 0.1);
+  --color-payout-border: rgba(130, 245, 193, 0.2);
+  --color-payout-text: #00714e;
+  --color-tip-surface: rgba(0, 63, 177, 0.05);
+  --color-track: #e5e7eb;
+
+  --color-error: #ba1a1a;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-pill: 9999px;
+
+  --spacing-screen-h: 16px;
+  --spacing-card-padding: 17px;
+  --spacing-gap: 12px;
+  --spacing-section-gap: 24px;
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-dark);
+}
+
+/*
+ * Named text styles mirroring deliverOs-fe/global.css `Typography`.
+ * Keep class names identical across both apps so a screen looks the same
+ * whether it's driver (RN/NativeWind) or portal (web/Tailwind).
+ */
+@layer components {
+  .text-display-lg {
+    @apply font-extrabold text-[36px] leading-[40px] tracking-[-1.08px];
+  }
+  .text-headline-lg {
+    @apply font-semibold text-[32px] leading-[40px];
+  }
+  .text-headline-md {
+    @apply font-bold text-[24px] leading-[32px];
+  }
+  .text-headline-sm {
+    @apply font-bold text-[24px] leading-[28px];
+  }
+  .text-title-lg {
+    @apply font-semibold text-[20px] leading-[28px];
+  }
+  .text-title-md {
+    @apply font-bold text-[18px] leading-[26px];
+  }
+  .text-body-lg {
+    @apply font-semibold text-[16px] leading-[24px];
+  }
+  .text-body-md {
+    @apply font-normal text-[16px] leading-[24px];
+  }
+  .text-body-sm {
+    @apply font-normal text-[14px] leading-[20px];
+  }
+  .text-label-lg {
+    @apply font-semibold text-[14px] leading-[20px] tracking-[0.7px];
+  }
+  .text-label-caps {
+    @apply font-semibold text-[14px] leading-[20px] tracking-[0.7px] uppercase;
+  }
+  .text-caption {
+    @apply font-medium text-[12px] leading-[16px];
+  }
+  .text-badge {
+    @apply font-bold text-[10px] leading-[15px] uppercase;
+  }
+  .text-button {
+    @apply font-bold text-[16px] leading-[24px];
+  }
+}
+/*
+ ---break---
+ */
+/*
+ * shadcn's semantic tokens, brand-aligned to deliverOs-fe/constants/theme.ts
+ * (Colors, Radius). chart-* are left as shadcn's neutral defaults — the
+ * driver app defines no data-viz palette to mirror.
+ */
+:root {
+  --background: #f9f9ff;
+  --foreground: #141b2b;
+  --card: #ffffff;
+  --card-foreground: #141b2b;
+  --popover: #ffffff;
+  --popover-foreground: #141b2b;
+  --primary: #d97706;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f3ff;
+  --secondary-foreground: #141b2b;
+  --muted: #f1f3ff;
+  --muted-foreground: #737686;
+  --accent: #e9edff;
+  --accent-foreground: #141b2b;
+  --destructive: #ba1a1a;
+  --border: #c3c5d7;
+  --input: #c3c5d7;
+  --ring: #d97706;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #141b2b;
+  --sidebar-primary: #d97706;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f3ff;
+  --sidebar-accent-foreground: #141b2b;
+  --sidebar-border: #c3c5d7;
+  --sidebar-ring: #d97706;
+}
+/*
+ ---break---
+ */
+.dark {
+  --background: #141b2b;
+  --foreground: #f9f9ff;
+  --card: #1e2536;
+  --card-foreground: #f9f9ff;
+  --popover: #1e2536;
+  --popover-foreground: #f9f9ff;
+  --primary: #d97706;
+  --primary-foreground: #ffffff;
+  --secondary: #293040;
+  --secondary-foreground: #edf0ff;
+  --muted: #293040;
+  --muted-foreground: #9ca3b8;
+  --accent: #293040;
+  --accent-foreground: #edf0ff;
+  --destructive: #ff6961;
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #d97706;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: #1e2536;
+  --sidebar-foreground: #f9f9ff;
+  --sidebar-primary: #d97706;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #293040;
+  --sidebar-accent-foreground: #edf0ff;
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: #d97706;
+}
+/*
+ ---break---
+ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
