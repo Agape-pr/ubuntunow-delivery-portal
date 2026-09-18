@@ -43,4 +43,4 @@ npm run lint    # eslint
 
 
 
-*Built on trust. Powered by community.* — UbuntuNow Technologies, Kigali, Rwanda
+*Built on trust. Powered by UbuntuNow Technologies, Kigali, Rwanda
