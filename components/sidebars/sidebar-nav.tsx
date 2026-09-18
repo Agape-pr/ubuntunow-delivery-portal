@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { cn } from "cn";
 import { ChevronDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NAV_GROUP_ICONS, NAV_ICONS, NAV_ICON_FALLBACK } from "./nav-icons";
-import type { NavGroup } from "./nav-items";
+import { hrefForKey, type NavGroup } from "./nav-items";
 
 /**
  * Sidebar shared by every role, admin and portal alike. Every row -- whether
@@ -18,30 +19,48 @@ import type { NavGroup } from "./nav-items";
  * list. Expanded groups draw a tree connector (trunk + branch per child)
  * down to their items. Each group's expand/collapse state is independent --
  * opening one has no effect on the others.
+ *
+ * Navigation is real routing (Link + the current pathname), not client
+ * state -- `basePath` + `routes` resolve each item's key to its canonical
+ * URL (see hrefForKey in nav-items.ts), so the same key always lands on the
+ * same page regardless of which role's sidebar it's clicked from.
  */
 export function SidebarNav({
   subheading,
   roleLabel,
   groups,
-  active,
-  onSelect,
+  basePath,
+  routes,
   onLogout,
 }: {
   subheading: string;
   roleLabel: string;
   groups: NavGroup[];
-  active: string;
-  onSelect: (key: string) => void;
+  basePath: string;
+  routes: Record<string, string>;
   onLogout: () => void;
 }) {
   const router = useRouter();
-  // Accordion: at most one group open at a time -- expanding a new one
-  // implicitly closes whichever was open, since this only ever holds one label.
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const pathname = usePathname();
+  // Accordion: at most one group open at a time. Until the user manually
+  // toggles one, the group containing the current route auto-expands.
+  const [manualExpanded, setManualExpanded] = useState<string | null>(null);
 
   function toggleGroup(label: string) {
-    setExpandedGroup((prev) => (prev === label ? null : label));
+    setManualExpanded((prev) => (prev === label ? "" : label));
   }
+
+  function hrefFor(key: string) {
+    return hrefForKey(basePath, routes, key);
+  }
+
+  function isItemActive(key: string) {
+    return pathname === hrefFor(key);
+  }
+
+  const autoExpandLabel = groups.find(
+    (group) => group.label && group.items.some((item) => isItemActive(item.key))
+  )?.label;
 
   return (
     <aside className="flex w-80 shrink-0 flex-col bg-sidebar-dark text-on-overlay-dark">
@@ -68,48 +87,44 @@ export function SidebarNav({
           if (dashboardItem) {
             const DashboardIcon = NAV_ICONS[dashboardItem.key] ?? NAV_ICON_FALLBACK;
             return (
-              <button
+              <Link
                 key={dashboardItem.key}
-                type="button"
-                onClick={() => onSelect(dashboardItem.key)}
+                href={hrefFor(dashboardItem.key)}
                 className={cn(
                   "mb-2 flex items-center justify-between rounded-full px-4 py-3 text-left transition-colors",
-                  active === dashboardItem.key
+                  isItemActive(dashboardItem.key)
                     ? "bg-primary text-on-primary"
                     : "bg-white/5 text-on-overlay-dark hover:bg-white/10"
                 )}
               >
                 <span className="text-body-lg font-semibold whitespace-nowrap">{dashboardItem.label}</span>
                 <DashboardIcon className="size-5 shrink-0" />
-              </button>
+              </Link>
             );
           }
 
           if (!group.label) {
             return group.items.map((item) => (
-              <NavRow key={item.key} item={item} active={active} onSelect={onSelect} />
+              <NavRow key={item.key} item={item} href={hrefFor(item.key)} active={isItemActive(item.key)} />
             ));
           }
 
           const GroupIcon = NAV_GROUP_ICONS[group.label] ?? NAV_ICON_FALLBACK;
-          const isExpanded = expandedGroup === group.label;
-          // A group header is a selectable row too, sharing the same `active`
-          // value as every flat item and Dashboard. It's also active
+          const isExpanded = manualExpanded !== null ? manualExpanded === group.label : autoExpandLabel === group.label;
+          // A group header is a selectable row too, sharing the same active
+          // styling as every flat item and Dashboard. It's also active
           // whenever one of its own children is the active item -- a
           // selected child and its parent group are both "active" (parent in
           // full, child in a lighter tone via NavRow), unlike two unrelated
           // top-level rows, which can never both be active.
           const groupKey = group.label.toLowerCase();
-          const isActive = active === groupKey || group.items.some((item) => item.key === active);
+          const isActive = isItemActive(groupKey) || group.items.some((item) => isItemActive(item.key));
 
           return (
             <div key={group.label} className="flex flex-col gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  toggleGroup(group.label!);
-                  onSelect(groupKey);
-                }}
+              <Link
+                href={hrefFor(groupKey)}
+                onClick={() => toggleGroup(group.label!)}
                 className={cn(
                   "text-body-sm flex items-center justify-between rounded-md px-3 py-3 text-left transition-colors",
                   isActive
@@ -124,7 +139,7 @@ export function SidebarNav({
                 <ChevronDown
                   className={cn("size-4 shrink-0 transition-transform", isExpanded && "rotate-180")}
                 />
-              </button>
+              </Link>
               {isExpanded ? (
                 <div className="relative flex flex-col gap-1.5 pl-9">
                   <div className="absolute top-0 bottom-0 left-4 w-px bg-white/15" aria-hidden />
@@ -134,7 +149,7 @@ export function SidebarNav({
                         className="absolute -left-5 top-1/2 h-px w-5 -translate-y-1/2 bg-white/15"
                         aria-hidden
                       />
-                      <NavRow item={item} active={active} onSelect={onSelect} compact />
+                      <NavRow item={item} href={hrefFor(item.key)} active={isItemActive(item.key)} compact />
                     </div>
                   ))}
                 </div>
@@ -170,26 +185,24 @@ export function SidebarNav({
 
 function NavRow({
   item,
+  href,
   active,
-  onSelect,
   compact,
 }: {
   item: { key: string; label: string; badge?: string | number };
-  active: string;
-  onSelect: (key: string) => void;
+  href: string;
+  active: boolean;
   compact?: boolean;
 }) {
   const ItemIcon = NAV_ICONS[item.key] ?? NAV_ICON_FALLBACK;
-  const isActive = active === item.key;
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(item.key)}
+    <Link
+      href={href}
       className={cn(
         "text-body-sm flex w-full items-center justify-between rounded-md px-3 text-left transition-colors",
         compact ? "py-2" : "py-3",
-        isActive
+        active
           ? compact
             ? "bg-primary/10 font-semibold text-primary"
             : "bg-primary font-semibold text-on-primary"
@@ -201,10 +214,10 @@ function NavRow({
         {item.label}
       </span>
       {item.badge !== undefined ? (
-        <Badge variant={isActive ? "secondary" : "outline"} className="border-white/20 text-system-yellow">
+        <Badge variant={active ? "secondary" : "outline"} className="border-white/20 text-system-yellow">
           {item.badge}
         </Badge>
       ) : null}
-    </button>
+    </Link>
   );
 }

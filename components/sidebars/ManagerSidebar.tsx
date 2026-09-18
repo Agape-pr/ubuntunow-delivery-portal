@@ -4,8 +4,8 @@ import { SidebarNav } from "./sidebar-nav";
 import { MANAGER_NAV_GROUPS } from "./nav-items";
 
 export function ManagerSidebar(props: {
-  active: string;
-  onSelect: (key: string) => void;
+  basePath: string;
+  routes: Record<string, string>;
   onLogout: () => void;
 }) {
   return (

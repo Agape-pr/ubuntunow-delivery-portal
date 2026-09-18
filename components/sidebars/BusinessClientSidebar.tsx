@@ -4,8 +4,8 @@ import { SidebarNav } from "./sidebar-nav";
 import { BUSINESS_CLIENT_NAV_GROUPS } from "./nav-items";
 
 export function BusinessClientSidebar(props: {
-  active: string;
-  onSelect: (key: string) => void;
+  basePath: string;
+  routes: Record<string, string>;
   onLogout: () => void;
 }) {
   return (

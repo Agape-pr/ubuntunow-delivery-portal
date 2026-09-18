@@ -4,8 +4,8 @@ import { SidebarNav } from "./sidebar-nav";
 import { SUPER_ADMIN_NAV_GROUPS } from "./nav-items";
 
 export function SuperAdminSidebar(props: {
-  active: string;
-  onSelect: (key: string) => void;
+  basePath: string;
+  routes: Record<string, string>;
   onLogout: () => void;
 }) {
   return (
