@@ -1,12 +1,19 @@
 "use client";
 
 import { SidebarNav } from "./sidebar-nav";
-import { BUSINESS_CLIENT_NAV_ITEMS } from "./nav-items";
+import { BUSINESS_CLIENT_NAV_GROUPS } from "./nav-items";
 
 export function BusinessClientSidebar(props: {
   active: string;
   onSelect: (key: string) => void;
   onLogout: () => void;
 }) {
-  return <SidebarNav heading="Business Client" items={BUSINESS_CLIENT_NAV_ITEMS} {...props} />;
+  return (
+    <SidebarNav
+      subheading="Business Sender Portal"
+      roleLabel="Business Client"
+      groups={BUSINESS_CLIENT_NAV_GROUPS}
+      {...props}
+    />
+  );
 }

@@ -10,9 +10,11 @@
  * Design tokens mirrored from deliverOs-fe/constants/theme.ts (the driver
  * app's single source of truth, itself taken from the "Delivery Os" Figma
  * file). Keep these two in sync by hand — there's no shared package yet.
+ * Exception: --font-sans below is Poppins, not Inter -- a deliberate
+ * portal-only divergence from the driver app's font, per request.
  */
 @theme inline {
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-poppins);
 
   --color-primary: #d97706;
   --color-primary-deep: #92400e;
@@ -42,6 +44,9 @@
   --color-info: #2563eb;
   --color-overlay-dark: #293040;
   --color-on-overlay-dark: #edf0ff;
+  /* Admin sidebar background -- not from the driver app; a deliberate
+     portal-only surface matching a reference dark-navy sidebar design. */
+  --color-sidebar-dark: #0f172a;
   --color-rating-pill: #ffdbce;
   --color-vehicle: #003fb1;
   --color-payout-surface: rgba(130, 245, 193, 0.1);
@@ -51,6 +56,7 @@
   --color-track: #e5e7eb;
 
   --color-error: #ba1a1a;
+  --color-system-yellow: #ffcc00;
 
   --radius-sm: 8px;
   --radius-md: 12px;
