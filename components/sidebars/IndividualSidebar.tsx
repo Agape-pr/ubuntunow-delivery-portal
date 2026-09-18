@@ -4,8 +4,8 @@ import { SidebarNav } from "./sidebar-nav";
 import { INDIVIDUAL_NAV_GROUPS } from "./nav-items";
 
 export function IndividualSidebar(props: {
-  active: string;
-  onSelect: (key: string) => void;
+  basePath: string;
+  routes: Record<string, string>;
   onLogout: () => void;
 }) {
   return (

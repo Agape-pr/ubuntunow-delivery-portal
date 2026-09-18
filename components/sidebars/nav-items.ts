@@ -135,3 +135,59 @@ export const INDIVIDUAL_NAV_GROUPS: NavGroup[] = [
     ],
   },
 ];
+
+/**
+ * Canonical folder-based route per nav key, relative to the surface's base
+ * path ("" for the surface root itself -- both admin and portal roles
+ * share the same base path, "/dashboard").
+ *
+ * This is deliberately separate from NAV_GROUPS: a key's *route* is fixed
+ * regardless of which role is viewing it, while its *grouping* (which
+ * label it's nested under, or whether it's shown flat) varies per role --
+ * e.g. super_admin nests "wallets" under the "Drivers" group while finance
+ * shows it as a flat top-level item, but both must land on the same
+ * /dashboard/drivers/wallets page. A group *header* itself (e.g. clicking
+ * "Drivers") routes to that feature's landing page, keyed by the group's
+ * lowercased label.
+ */
+export const ADMIN_ROUTES: Record<string, string> = {
+  dashboard: "",
+  "all-deliveries": "deliveries",
+  deliveries: "deliveries",
+  "manual-queue": "deliveries/manual-queue",
+  dispatch: "dispatch",
+  "live-drivers": "dispatch/live-drivers",
+  alerts: "dispatch/alerts",
+  drivers: "drivers",
+  roster: "drivers/roster",
+  approvals: "drivers/approvals",
+  performance: "drivers/performance",
+  wallets: "drivers/wallets",
+  payouts: "drivers/payouts",
+  users: "users",
+  "internal-users": "users",
+  "user-roles": "users/roles",
+  clients: "clients",
+  "business-clients": "clients/business",
+  "tech-clients": "clients/tech",
+  "api-keys": "clients/api-keys",
+  disputes: "disputes",
+  "pricing-config": "pricing-config",
+  reports: "reports",
+};
+
+export const PORTAL_ROUTES: Record<string, string> = {
+  dashboard: "",
+  "send-package": "send-package",
+  "my-deliveries": "my-deliveries",
+  "track-delivery": "track-delivery",
+  disputes: "disputes",
+  billing: "billing",
+  profile: "profile",
+};
+
+/** Builds the href for a nav key under a surface's base path (e.g. "/dashboard"). */
+export function hrefForKey(basePath: string, routes: Record<string, string>, key: string): string {
+  const segment = routes[key] ?? key;
+  return segment ? `${basePath}/${segment}` : basePath;
+}

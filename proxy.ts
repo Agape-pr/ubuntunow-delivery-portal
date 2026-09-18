@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { ACCESS_TOKEN_COOKIE, ROLE_COOKIE } from "@/lib/auth-cookies";
-import { homeRouteForRole, isAdminRole, isPortalRole, type Role } from "@/types/auth";
+import { homeRouteForRole, type Role } from "@/types/auth";
 
 
 export function proxy(request: NextRequest) {
@@ -23,21 +23,12 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  const surfaceGuards: { prefix: string; isAllowed: (role: Role) => boolean; fallback: string }[] = [
-    { prefix: "/dashboard", isAllowed: isPortalRole, fallback: "/admin" },
-    { prefix: "/admin", isAllowed: isAdminRole, fallback: "/dashboard" },
-  ];
-
-  for (const guard of surfaceGuards) {
-    if (!pathname.startsWith(guard.prefix)) continue;
-
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-    if (!guard.isAllowed(role!)) {
-      return NextResponse.redirect(new URL(guard.fallback, request.url));
-    }
-    return NextResponse.next();
+  // Every role -- admin and portal alike -- lives under /dashboard; this is
+  // just the "must be logged in" gate. Which *features* a role can reach
+  // within /dashboard is enforced by the (admin-only)/(portal-only) route
+  // group layouts, not here -- there's no URL prefix left to key off.
+  if (pathname.startsWith("/dashboard") && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();

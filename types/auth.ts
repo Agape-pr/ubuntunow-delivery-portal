@@ -23,9 +23,9 @@ export function isPortalRole(role: string): role is PortalRole {
   return (PORTAL_ROLES as readonly string[]).includes(role);
 }
 
-/** Option A: one opaque URL per surface -- content inside varies by role, not the path. */
-export function homeRouteForRole(role: Role): "/admin" | "/dashboard" {
-  return isAdminRole(role) ? "/admin" : "/dashboard";
+/** Every role's landing route -- admin and portal alike share /dashboard now; the sidebar/shell differs, not the URL (see ADMIN_ROUTES/PORTAL_ROUTES in nav-items.ts). */
+export function homeRouteForRole(_role: Role): "/dashboard" {
+  return "/dashboard";
 }
 
 export interface LoginRequest {
